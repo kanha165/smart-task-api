@@ -12,20 +12,20 @@ def get_priority(text: str):
 import os
 import smtplib
 from email.mime.text import MIMEText
+from dotenv import load_dotenv
+import os
 
+
+load_dotenv()
+
+EMAIL = os.getenv("EMAIL")
+PASSWORD = os.getenv("PASSWORD")
 
 def send_email(receiver_email, otp):
     print("Connecting to Gmail...")
     
     sender_email = os.getenv("EMAIL")
     app_password = os.getenv("APP_PASSWORD")
-
-    # 🔥 ADD THIS (IMPORTANT)
-    print("DEBUG EMAIL:", sender_email)
-    print("DEBUG PASSWORD:", app_password)
-
-    if not sender_email or not app_password:
-        raise Exception("❌ EMAIL or APP_PASSWORD not found in environment variables")
 
     subject = " Password Reset OTP - Smart Task API"
 
