@@ -16,8 +16,7 @@ from email.mime.text import MIMEText
 
 def send_email(receiver_email, otp):
     print("Connecting to Gmail...")
-    sender_email = "kanhapatidar7251@gmail.com"
-    app_password = "lmcywvzlqljftgpm"
+    
     sender_email = os.getenv("EMAIL")
     app_password = os.getenv("APP_PASSWORD")
 
