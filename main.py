@@ -33,3 +33,9 @@ async def log_requests(request: Request, call_next):
 
     print("Response sent")
     return response
+
+
+from routes import auth_extra
+
+app.include_router(auth_extra.router)
+
