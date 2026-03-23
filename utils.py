@@ -1,3 +1,5 @@
+# utils.py
+
 def get_priority(text: str):
     text = text.lower()
 
@@ -9,58 +11,66 @@ def get_priority(text: str):
         return "Low"
 
 
+# ================= EMAIL FUNCTION (SendGrid) =================
+
 import os
-import smtplib
-from email.mime.text import MIMEText
+import requests
 from dotenv import load_dotenv
-import os
 
-
+# Load env variables (local ke liye)
 load_dotenv()
 
+
 def send_email(receiver_email, otp):
-    print("Connecting to Gmail...")
-    
+    print("Sending email via SendGrid...")
+
+    api_key = os.getenv("SENDGRID_API_KEY")
     sender_email = os.getenv("EMAIL")
-    app_password = os.getenv("APP_PASSWORD")
 
-    subject = " Password Reset OTP - Smart Task API"
+    # 🔥 Safety check
+    if not api_key or not sender_email:
+        raise Exception("❌ SENDGRID_API_KEY or EMAIL missing")
 
-    #  FIX: body function ke andar hona chahiye
-    body = f"""
+    url = "https://api.sendgrid.com/v3/mail/send"
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "personalizations": [
+            {
+                "to": [{"email": receiver_email}],
+                "subject": "Password Reset OTP - Smart Task API"
+            }
+        ],
+        "from": {"email": sender_email},
+        "content": [
+            {
+                "type": "text/plain",
+                "value": f"""
 Hi,
 
-You recently requested to reset your password.
+Your OTP is: {otp}
 
-Your OTP (One-Time Password) is:
-👉 {otp}
+This OTP is valid for 5 minutes.
 
-⏳ This OTP will expire in 5 minutes.
+Do not share it with anyone.
 
-⚠️ For security reasons, do not share this OTP with anyone.
-
-If you did not initiate this request, you can safely ignore this email.
-
-Thanks & Regards,  
-Smart Task API Team  
+- Smart Task API
 """
-
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = sender_email
-    msg["To"] = receiver_email
+            }
+        ]
+    }
 
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(sender_email, app_password)
+        response = requests.post(url, headers=headers, json=data)
 
-        server.sendmail(sender_email, receiver_email, msg.as_string())
-        server.quit()
-
-        print("✅ Email sent successfully")
+        if response.status_code == 202:
+            print("✅ Email sent successfully via SendGrid")
+        else:
+            print("❌ Error:", response.text)
 
     except Exception as e:
-        print("❌ Error:", e)
+        print("❌ Exception:", e)
