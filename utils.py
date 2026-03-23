@@ -19,7 +19,7 @@ import os
 load_dotenv()
 
 EMAIL = os.getenv("EMAIL")
-PASSWORD = os.getenv("PASSWORD")
+PASSWORD = os.getenv("APP_PASSWORD")
 
 def send_email(receiver_email, otp):
     print("Connecting to Gmail...")
