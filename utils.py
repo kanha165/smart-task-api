@@ -20,6 +20,13 @@ def send_email(receiver_email, otp):
     sender_email = os.getenv("EMAIL")
     app_password = os.getenv("APP_PASSWORD")
 
+    # 🔥 ADD THIS (IMPORTANT)
+    print("DEBUG EMAIL:", sender_email)
+    print("DEBUG PASSWORD:", app_password)
+
+    if not sender_email or not app_password:
+        raise Exception("❌ EMAIL or APP_PASSWORD not found in environment variables")
+
     subject = " Password Reset OTP - Smart Task API"
 
     #  FIX: body function ke andar hona chahiye
